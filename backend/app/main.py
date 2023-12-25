@@ -5,12 +5,11 @@ This module defines a FastAPI application that serves
 as the backend for the project.
 """
 
-from fastapi import FastAPI
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import pandas as pd
-from .mymodules.utils import top_wines_by_rating, wines_by_least_recent_year, wines_by_recent_year, all_wines
+from .mymodules.utils import top_wines_by_rating, wines_by_least_recent_year, wines_by_recent_year, wines_by_type
 
 
 app = FastAPI()
@@ -66,6 +65,19 @@ def get_least_recent_year(limit: int = 10):
     least_recent_wines = wines_by_least_recent_year(df_wines, limit).to_dict(orient='records')
     return JSONResponse(content=least_recent_wines) 
 
+@app.get('/wines-by-type')
+def get_wines_by_type(wine_type, limit: int = 10):
+    """
+    Endpoint to get wines by type.
+
+    Parameters:
+        limit: (optional) an integer representing the max number of wines that has to be returned
+        wine_type: (mandatory) typology of wine [red, rose, sparkling, white]
+    Returns:
+        dict: top wines sorted by rating (descending)
+    """
+    wines_by_type_result = wines_by_type(df_wines, wine_type, limit).to_dict(orient='records')
+    return JSONResponse(content=wines_by_type_result)
 
 @app.get('/')
 def read_root():
