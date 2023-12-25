@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import pandas as pd
-from .mymodules.utils import top_wines_by_rating, wines_by_least_recent_year, wines_by_recent_year
+from .mymodules.utils import top_wines_by_rating, wines_by_least_recent_year, wines_by_recent_year, all_wines
 
 
 app = FastAPI()
@@ -50,11 +50,11 @@ def get_most_recent_wines(limit: int = 10):
     Returns:
         dict: top wines sorted by rating (descending)
     """
-    top_wines_dict = wines_by_recent_year(df_wines, limit).to_dict(orient='records')
-    return JSONResponse(content=top_wines_dict)
+    most_recent_wine = wines_by_recent_year(df_wines, limit).to_dict(orient='records')
+    return JSONResponse(content=most_recent_wine)
 
 @app.get('/least-recent-wines')
-def get_most_recent_wines(limit: int = 10):
+def get_least_recent_year(limit: int = 10):
     """
     Endpoint to get the best reviewed wines.
 
@@ -63,8 +63,8 @@ def get_most_recent_wines(limit: int = 10):
     Returns:
         dict: top wines sorted by rating (descending)
     """
-    top_wines_dict = wines_by_least_recent_year(df_wines, limit).to_dict(orient='records')
-    return JSONResponse(content=top_wines_dict) 
+    least_recent_wines = wines_by_least_recent_year(df_wines, limit).to_dict(orient='records')
+    return JSONResponse(content=least_recent_wines) 
 
 
 @app.get('/')
@@ -73,9 +73,19 @@ def read_root():
     Root endpoint for the backend.
 
     Returns:
-        dict: A simple greeting.
+        dict: Information about the API and its endpoints.
     """
-    return {"Hello": "World"}
+    info = {
+        "message": "Welcome to the Wine API!",
+        "description": "This API provides information about different types of wines.",
+        "endpoints": {
+            "/top-wines": "Get the best-reviewed wines.",
+            "/most-recent-wines": "Get the most recently reviewed wines.",
+            "/least-recent-wines": "Get the least recently reviewed wines.",
+            "/get-date": "Get the current date."
+        }
+    }
+    return JSONResponse(content=info)
 
 @app.get('/get-date')
 def get_date():

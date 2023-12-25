@@ -34,7 +34,7 @@ def index():
     # Fetch the date from the backend
     date_from_backend = fetch_date_from_backend()
 
-    return render_template('index.html', top_wines=fetch_top_wines(6))
+    return render_template('index.html', top_wines=fetch_top_wines(6), most_recent_wines=fetch_most_recent_wines(6), least_recent_wines=fetch_least_recent_wines(6))
 
 def fetch_top_wines(limit=10):
     url = FASTAPI_BACKEND_HOST + "/top-wines?limit=" + str(limit)
@@ -46,6 +46,29 @@ def fetch_top_wines(limit=10):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching wines from backend: {e}")
         return 'Wines not available'
+
+def fetch_most_recent_wines(limit=10):
+    url = FASTAPI_BACKEND_HOST + "/most-recent-wines?limit=" + str(limit)
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching wines from backend: {e}")
+        return 'Wines not available'
+    
+def fetch_least_recent_wines(limit=10):
+    url = FASTAPI_BACKEND_HOST + "/least-recent-wines?limit=" + str(limit)
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching wines from backend: {e}")
+        return 'Wines not available'
+    
 
 
 def fetch_date_from_backend():
