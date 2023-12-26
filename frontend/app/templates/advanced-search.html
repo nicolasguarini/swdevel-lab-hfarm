@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %} Internal of Frontend {% endblock %}
+
+{% block content %}
+
+    <div class="container mt-5 text-center">
+        <div class="pt-8" style="padding-top: 24px; padding-bottom: 40px">
+            <h1 class="fw-bold pt-10">Advanced Search</h1>
+            <p>This is an advanced search page for interacting with the Python backend.</p>
+        </div>
+        
+        <form method="POST" action="" style="max-width: 800px; margin: auto; text-align: center;">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.type(class="form-select m-auto", style="max-width: 300px") }}
+            </div>
+            {{ form.submit(class="btn btn-primary mt-3") }}
+        </form>
+
+        <!-- Display the result here -->
+        <div id="resultContainer" class="my-5">
+            {% if result %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                
+                    {% for wine in result %}
+                        <div class="col text-center">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ wine.get("name") }}</h5>
+                                    <p class="card-text">{{ wine.get("region") }}, {{ wine.get("country") }}</p>
+                                    <p class="card-text">Year: {{ wine.get("year") }}</p>
+                                    <p class="card-text">{{ wine.get("rating") }} / 5 ({{ wine.get("numberofratings") }})</p>
+                                    <p class="card-text">Type: {{ wine.get("type") }}</p>
+                                    <p class="card-text fw-bold fs-4">{{ wine.get("price") }} $</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                </div>
+            {% endif %}
+            {% if error_message %}
+                <p class="text-danger">{{ error_message }}</p>
+            {% endif %}
+        </div>
+        
+
+    </div>
+
+{% endblock %}

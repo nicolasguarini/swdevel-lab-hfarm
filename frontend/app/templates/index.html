@@ -4,50 +4,50 @@
 
 {% block content %}
     <div class="container mt-5 p-2">
-        <div class="text-center pb-10 m-auto" style="max-width: 600px; padding-top: 24px; padding-bottom: 24px;">
+        <div class="text-center pb-10 m-auto py-24" style="max-width: 600px; padding-top: 24px; padding-bottom: 24px">
             <h1 class="fw-bold">VinoView</h1>
             <p class="fs-6 pt-2">A simple application built with Python to display statistics and information on various types of wines from all over the world.</p>
         </div>
 
         <div class="row" style="margin-top: 24px;">
             <div class="col-md-4 text-center">
-                <h2>Top Wines</h2>
+                <h2 class="py-5">Top Wines</h2>
                 {% for wine in top_wines %}
-                    <div class="card mb-3" style="width: 20rem; height: 17rem; margin: auto;">
+                    <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ wine.get("Name") }}</h5>
-                            <p class="card-text">{{ wine.get("Region") }}, {{ wine.get("Country") }}</p>
-                            <p class="card-text">Year: {{ wine.get("Year") }}</p>
-                            <p class="card-text">{{ wine.get("Rating") }} / 5 ({{ wine.get("NumberOfRatings") }})</p>
-                            <p class="card-text fw-bold fs-4">{{ wine.get("Price") }} $</p>
+                            <h5 class="card-title">{{ wine.get("name") }}</h5>
+                            <p class="card-text">{{ wine.get("region") }}, {{ wine.get("country") }}</p>
+                            <p class="card-text">Year: {{ wine.get("year") }}</p>
+                            <p class="card-text">{{ wine.get("rating") }} / 5 ({{ wine.get("numberofratings") }})</p>
+                            <p class="card-text fw-bold fs-4">{{ wine.get("price") }} $</p>
                         </div>
                     </div>
                 {% endfor %}
             </div>
             <div class="col-md-4 text-center">
-                <h2>Most Recent Wines</h2>
+                <h2 class="py-5">Most Recent Wines</h2>
                 {% for wine in most_recent_wines %}
-                    <div class="card mb-3" style="width: 20rem; height: 17rem; margin: auto;">
+                    <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ wine.get("Name") }}</h5>
-                            <p class="card-text">{{ wine.get("Region") }}, {{ wine.get("Country") }}</p>
-                            <p class="card-text">Year: {{ wine.get("Year") }}</p>
-                            <p class="card-text">{{ wine.get("Rating") }} / 5 ({{ wine.get("NumberOfRatings") }})</p>
-                            <p class="card-text fw-bold fs-4 ">{{ wine.get("Price") }} $</p>
+                            <h5 class="card-title">{{ wine.get("name") }}</h5>
+                            <p class="card-text">{{ wine.get("region") }}, {{ wine.get("country") }}</p>
+                            <p class="card-text">Year: {{ wine.get("year") }}</p>
+                            <p class="card-text">{{ wine.get("rating") }} / 5 ({{ wine.get("numberofratings") }})</p>
+                            <p class="card-text fw-bold fs-4 ">{{ wine.get("price") }} $</p>
                         </div>
                     </div>
                 {% endfor %}
             </div>
             <div class="col-md-4 text-center">
-                <h2>Least Recent Wines</h2>
+                <h2 class="py-5">Least Recent Wines</h2>
                 {% for wine in least_recent_wines %}
-                    <div class="card mb-3" style="width: 20rem; height: 17  rem; margin: auto;">
+                    <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ wine.get("Name") }}</h5>
-                            <p class="card-text">{{ wine.get("Region") }}, {{ wine.get("Country") }}</p>
-                            <p class="card-text">Year: {{ wine.get("Year") }}</p>
-                            <p class="card-text">{{ wine.get("Rating") }} / 5 ({{ wine.get("NumberOfRatings") }})</p>
-                            <p class="card-text fw-bold fs-4">{{ wine.get("Price") }} $</p>
+                            <h5 class="card-title">{{ wine.get("name") }}</h5>
+                            <p class="card-text">{{ wine.get("region") }}, {{ wine.get("country") }}</p>
+                            <p class="card-text">Year: {{ wine.get("year") }}</p>
+                            <p class="card-text">{{ wine.get("rating") }} / 5 ({{ wine.get("numberofratings") }})</p>
+                            <p class="card-text fw-bold fs-4">{{ wine.get("price") }} $</p>
                         </div>
                     </div>
                 {% endfor %}

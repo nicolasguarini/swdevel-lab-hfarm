@@ -4,24 +4,20 @@ Frontend module for the Flask application.
 This module defines a simple Flask application that serves as the frontend for the project.
 """
 
-import json
 from flask import Flask, render_template
-import requests  # Import the requests library to make HTTP requests
+import requests
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import SelectField, SubmitField
+
+BACKEND_HOST = 'http://backend/'
+DEFAULT_TYPE_CHOICE = "Select type..."
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'  # Replace with a secure secret key
+app.config['SECRET_KEY'] = 'your_secret_key'  # TODO: Replace with a secure secret key
 
-# Configuration for the FastAPI backend URL
-FASTAPI_BACKEND_HOST = 'http://backend'  # Replace with the actual URL of your FastAPI backend
-BACKEND_URL = f'{FASTAPI_BACKEND_HOST}/query/'
-
-
-class QueryForm(FlaskForm):
-    person_name = StringField('Person Name:')
-    submit = SubmitField('Get Birthday from FastAPI Backend')
-
+class SearchWinesForm(FlaskForm):
+    type = SelectField(choices=[DEFAULT_TYPE_CHOICE, "white", "red", "sparkling", "rose"])
+    submit = SubmitField('Search Wines!')
 
 @app.route('/')
 def index():
@@ -31,24 +27,23 @@ def index():
     Returns:
         str: Rendered HTML content for the index page.
     """
-    # Fetch the date from the backend
-    date_from_backend = fetch_date_from_backend()
 
     return render_template('index.html', top_wines=fetch_top_wines(6), most_recent_wines=fetch_most_recent_wines(6), least_recent_wines=fetch_least_recent_wines(6))
 
 def fetch_top_wines(limit=10):
-    url = FASTAPI_BACKEND_HOST + "/top-wines?limit=" + str(limit)
+    url = BACKEND_HOST + "top-wines?limit=" + str(limit)
 
     try:
         response = requests.get(url)
         response.raise_for_status()
+        print(response.json())
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching wines from backend: {e}")
         return 'Wines not available'
 
 def fetch_most_recent_wines(limit=10):
-    url = FASTAPI_BACKEND_HOST + "/most-recent-wines?limit=" + str(limit)
+    url = BACKEND_HOST + "most-recent-wines?limit=" + str(limit)
 
     try:
         response = requests.get(url)
@@ -59,7 +54,7 @@ def fetch_most_recent_wines(limit=10):
         return 'Wines not available'
     
 def fetch_least_recent_wines(limit=10):
-    url = FASTAPI_BACKEND_HOST + "/least-recent-wines?limit=" + str(limit)
+    url = BACKEND_HOST + "least-recent-wines?limit=" + str(limit)
 
     try:
         response = requests.get(url)
@@ -68,53 +63,35 @@ def fetch_least_recent_wines(limit=10):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching wines from backend: {e}")
         return 'Wines not available'
-    
 
-
-def fetch_date_from_backend():
+@app.route('/advanced-search', methods=['GET', 'POST'])
+def advanced_search():
     """
-    Function to fetch the current date from the backend.
+    Render the advanced search page.
 
     Returns:
-        str: Current date in ISO format.
+        str: Rendered HTML content for the advanced search page.
     """
-    backend_url = 'http://backend/get-date'  # Adjust the URL based on your backend configuration
-    try:
-        response = requests.get(backend_url)
-        response.raise_for_status()  # Raise an HTTPError for bad responses
-        return response.json().get('date', 'Date not available')
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching date from backend: {e}")
-        return 'Date not available'
-
-
-@app.route('/internal', methods=['GET', 'POST'])
-def internal():
-    """
-    Render the internal page.
-
-    Returns:
-        str: Rendered HTML content for the index page.
-    """
-    form = QueryForm()
+    form = SearchWinesForm()
     error_message = None  # Initialize error message
 
     if form.validate_on_submit():
-        person_name = form.person_name.data
+        type = form.type.data
+    
+        url = f'{BACKEND_HOST}advanced-search?limit=24&'
 
-        # Make a GET request to the FastAPI backend
-        fastapi_url = f'{FASTAPI_BACKEND_HOST}/query/{person_name}'
-        response = requests.get(fastapi_url)
+        if type != DEFAULT_TYPE_CHOICE:
+            url += f'type={type}'
+
+        response = requests.get(url)
 
         if response.status_code == 200:
-            # Extract and display the result from the FastAPI backend
             data = response.json()
-            result = data.get('birthday', f'Error: Birthday not available for {person_name}')
-            return render_template('internal.html', form=form, result=result, error_message=error_message)
+            return render_template('advanced-search.html', form=form, result=data, error_message=error_message)
         else:
-            error_message = f'Error: Unable to fetch birthday for {person_name} from FastAPI Backend'
+            error_message = f'Error: Unable to fetch data from FastAPI Backend'
 
-    return render_template('internal.html', form=form, result=None, error_message=error_message)
+    return render_template('advanced-search.html', form=form, result=None, error_message=error_message)
 
 
 if __name__ == '__main__':
