@@ -9,6 +9,7 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import pandas as pd
+from typing import Tuple
 from .mymodules.utils import top_wines_by_rating, wines_by_least_recent_year, wines_by_recent_year, filter_wines
 
 
@@ -75,12 +76,13 @@ def advanced_search_wines(
     rating: float = Query(None),
     num_ratings: int = Query(None),
     price: float = Query(None),
-    year: int = Query(None),
+    year_start: int = Query(None),
+    year_end: int = Query(None),
     limit: int = Query(10),
 ):
     """
     Endpoint for advanced search of wines.
-
+    
     Parameters:
         category (optional): Wine category.
         country (optional): Wine country.
@@ -103,7 +105,7 @@ def advanced_search_wines(
         "rating": rating,
         "numberofratings": num_ratings,
         "price": price,
-        "year": year,
+        "year": (year_start, year_end) if year_start is not None and year_end is not None else None,
     }
     result = filter_wines(df_wines, filters).head(limit).to_dict(orient='records')
 
