@@ -1,3 +1,4 @@
+import numpy as np
 from .filter_functions import filter_contains, filter_dataframe, filter_range
 
 def top_wines_by_rating(df_wines, limit=10):
@@ -42,6 +43,22 @@ def wines_by_least_recent_year(df_wines, limit=10):
     # Exclude wines with 'N.V.' (non-vintage) in the 'year' column
     df_wines = df_wines[df_wines['year'] != 'N.V.']
     return df_wines.sort_values(by="year", ascending=True).head(limit)
+
+def years_in_wines(df_wines):
+    # Assuming 'N.V.' is a string in the 'year' column that you want to exclude
+    filtered_years = df_wines[df_wines['year'] != 'N.V.']['year'].astype(float)
+    
+    # Check if the result is a NumPy array
+    if isinstance(filtered_years, np.ndarray):
+        min_year = np.min(filtered_years)
+        max_year = np.max(filtered_years)
+    else:
+        # If it's not a NumPy array, you can use Python built-in functions
+        min_year = min(filtered_years)
+        max_year = max(filtered_years)
+    
+    return {"min_year": min_year, "max_year": max_year}
+
 
 def filter_wines(df_wines, filters):
     """
