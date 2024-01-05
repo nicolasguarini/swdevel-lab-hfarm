@@ -7,16 +7,38 @@ This module defines a simple Flask application that serves as the frontend for t
 from flask import Flask, render_template
 import requests
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField
+from wtforms import SelectField, SubmitField, StringField
+import os
 
 BACKEND_HOST = 'http://backend/'
 DEFAULT_TYPE_CHOICE = "Select type..."
+DEFAULT_COUNTRY_CHOICE = "Select country..."
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'  # TODO: Replace with a secure secret key
+app.config['SECRET_KEY'] = os.urandom(32)
 
 class SearchWinesForm(FlaskForm):
-    type = SelectField(choices=[DEFAULT_TYPE_CHOICE, "white", "red", "sparkling", "rose"])
+    name = StringField(
+        label="Wine name...", 
+        render_kw={"placeholder": "Wine name..."}
+    )
+
+    type = SelectField(choices=[
+        DEFAULT_TYPE_CHOICE, 
+        "white", 
+        "red", 
+        "sparkling", 
+        "rose"
+    ]) # TODO: get all types from backend
+
+    country = SelectField(choices=[
+        DEFAULT_COUNTRY_CHOICE, 
+        "Italy",
+        "Germany", 
+        "France",
+        "Austria"
+    ]) # TODO: get all countries from backedn
+    
     submit = SubmitField('Search Wines!')
 
 @app.route('/')
@@ -77,11 +99,21 @@ def advanced_search():
 
     if form.validate_on_submit():
         type = form.type.data
+        country = form.country.data
+        name = form.name.data
     
         url = f'{BACKEND_HOST}advanced-search?limit=24&'
 
+        if name != "":
+            url += f'name={name}&'
+
         if type != DEFAULT_TYPE_CHOICE:
-            url += f'type={type}'
+            url += f'type={type}&'
+
+        if country != DEFAULT_COUNTRY_CHOICE:
+            url += f'country={country}&'
+
+        print("URL: " + url)
 
         response = requests.get(url)
 
@@ -92,7 +124,6 @@ def advanced_search():
             error_message = f'Error: Unable to fetch data from FastAPI Backend'
 
     return render_template('advanced-search.html', form=form, result=None, error_message=error_message)
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

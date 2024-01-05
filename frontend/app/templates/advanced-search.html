@@ -13,7 +13,11 @@
         <form method="POST" action="" style="max-width: 800px; margin: auto; text-align: center;">
             {{ form.csrf_token }}
             <div class="form-group">
+                {{ form.name(class="form-text m-auto p-2", style="max-width: 300px") }}
+                <br> <br>
                 {{ form.type(class="form-select m-auto", style="max-width: 300px") }}
+                <br>
+                {{ form.country(class="form-select m-auto", style="max-width: 300px")}}
             </div>
             {{ form.submit(class="btn btn-primary mt-3") }}
         </form>
