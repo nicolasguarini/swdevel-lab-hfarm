@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from .filter_functions import filter_contains, filter_dataframe, filter_range
+from .filter_functions import filter_contains, filter_range
 
 def top_wines_by_rating(df_wines, limit=10):
     """
@@ -69,10 +69,8 @@ def max_number_of_ratings(df_wines):
     Returns:
         - dict: Dictionary with the maximum number of ratings.
     """
-    # Find the maximum number of ratings in the DataFrame
     max_ratings = int(df_wines['numberofratings'].max())
     
-    # Return a dictionary with the maximum number of ratings
     return {"max_number_of_ratings": max_ratings}
 
 def countries_df(df_wines):
@@ -85,7 +83,6 @@ def countries_df(df_wines):
     Returns:
         - list: List of unique countries.
     """
-    # Get unique countries from the 'country' column and convert to a Python list
     countries = df_wines['country'].astype(str).unique()
     return countries.tolist()
 
@@ -99,7 +96,6 @@ def types_df(df_wines):
     Returns:
         - list: List of unique wine types.
     """
-    # Get unique wine types from the 'type' column and convert to a Python list
     types = df_wines['type'].astype(str).unique()
     return types.tolist()
 
@@ -120,12 +116,11 @@ def filter_wines(df_wines, filters):
         if value is not None and column in df_wines.columns:
             if column == 'year' or column == 'price' or column == 'numberofratings' and None not in value:
                 filtered_wines = filter_range(filtered_wines, column, *value)
-            elif column == 'name' or column == 'type' or column == 'winery' or column == 'region':
-                filtered_wines = filter_contains(filtered_wines, column, value)
             elif column == 'rating':
                 filtered_wines = filter_by_rating(filtered_wines, value)                
-    
-    # Return the filtered DataFrame
+            else:
+                filtered_wines = filter_contains(filtered_wines, column, value)
+
     return filtered_wines
 
 def filter_by_rating(df_wines, target_rating):
@@ -139,11 +134,8 @@ def filter_by_rating(df_wines, target_rating):
     Returns:
         - pd.DataFrame: DataFrame with only instances that have the desired rating.
     """
-    # Check if the target rating is within the valid range [0, 5]
     if 0 <= target_rating <= 5:
-        # Filter the DataFrame to include only instances with the desired rating
         filtered_df = df_wines[(target_rating <= df_wines['rating']) & (df_wines['rating'] < target_rating + 1)]
         return filtered_df
-    else:
-        # Raise a ValueError if the target rating is outside the valid range
-        raise ValueError("The rating must be between 0 and 5.")
+    else: 
+        return df_wines
