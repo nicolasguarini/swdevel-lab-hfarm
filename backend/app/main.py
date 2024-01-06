@@ -9,7 +9,6 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import pandas as pd
-import numpy as np
 from .mymodules.utils import *
 
 
@@ -27,6 +26,8 @@ df_white["type"] = "white"
 
 df_wines = pd.concat([df_red, df_rose, df_sparkling, df_white])
 df_wines.columns = map(str.lower, df_wines.columns)
+df_wines['year'] = pd.to_numeric(df_wines['year'], errors='coerce').astype('Int64')
+
 
 @app.get('/top-wines')
 def get_most_rated_wines(limit: int = 10):
@@ -60,12 +61,20 @@ def get_years_range():
     
     return JSONResponse(content=years_range)
 
-@app.get('/num-ratings-max-value') # MAX numero recensioni dei vini 
-
+@app.get('/num-ratings-max-value')
+def get_num_ratings_max_value():
+    num_ratings_max_value = max_number_of_ratings(df_wines)
+    return JSONResponse(content=num_ratings_max_value)
+    
 @app.get('/countries')
+def get_countries():
+    countries = countries_df(df_wines)
+    return JSONResponse(content=countries)
 
 @app.get('/types')
-
+def get_types():
+    types = types_df(df_wines)
+    return JSONResponse(content=types)
 
 @app.get('/least-recent-wines')
 def get_least_recent_year(limit: int = 10):
@@ -87,11 +96,18 @@ def advanced_search_wines(
     country: str = Query(None),
     region: str = Query(None),
     winery: str = Query(None),
-    rating: float = Query(None),
-    num_ratings: int = Query(None), # RESTITUIRE ARROTONDAMENTI A INTERO
-    price: float = Query(None),
+    # ----- 
+    rating: int = Query(None),
+    # -----
+    num_ratings_start: int = Query(None), 
+    num_ratings_end: int = Query(None),
+    # -----
+    price_start: float = Query(None),
+    price_end: float = Query(None),
+    # -----
     year_start: int = Query(None),
     year_end: int = Query(None),
+    
     limit: int = Query(10),
 ):
     """
@@ -118,8 +134,8 @@ def advanced_search_wines(
         "region": region,
         "winery": winery,
         "rating": rating,
-        "numberofratings": num_ratings,
-        "price": price,
+        "numberofratings": (num_ratings_start, num_ratings_end) if num_ratings_start is not None and num_ratings_end is not None else None,
+        "price": (price_start, price_end) if price_start is not None and price_end is not None else None,
         "year": (year_start, year_end) if year_start is not None and year_end is not None else None,
     }
     result = filter_wines(df_wines, filters).head(limit).to_dict(orient='records')

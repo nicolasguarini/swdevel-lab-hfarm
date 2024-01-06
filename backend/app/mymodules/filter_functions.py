@@ -27,10 +27,8 @@ def filter_contains(df, column, value):
         pd.DataFrame: Filtered DataFrame containing only rows that match the substring condition.
     """
     if column == 'year':
-        # For 'year' column, check for an exact match with the provided year (converted to a string)
         return df[df["year"] == str(value)]  
     else:
-        # For other columns, perform a case-insensitive substring match
         return df[df[column].str.contains(value, case=False, na=False)]
 
 def filter_range(df, column, min_value, max_value):
@@ -45,8 +43,7 @@ def filter_range(df, column, min_value, max_value):
 
     Returns:
         pd.DataFrame: Filtered DataFrame containing only rows where the specified column's values fall within the specified range.
-    """
+    """ 
     if column == 'year':
-        # For 'year' column, convert to numeric (ignoring errors for non-numeric values) and filter based on a numeric range
         df[column] = pd.to_numeric(df[column], errors='coerce').astype('Int64')
     return df[(df[column] >= min_value) & (df[column] <= max_value)]
