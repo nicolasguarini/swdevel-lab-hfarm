@@ -1,20 +1,25 @@
 """
 Frontend module for the Flask application.
 
-This module defines a simple Flask application that serves as the frontend for the project.
+This module defines a simple Flask application
+that serves as the frontend for the project.
 """
 
 from flask import Flask, render_template
 import requests
 from countries import DEFAULT_COUNTRY_CHOICE
-from fetch import fetch_least_recent_wines, fetch_most_recent_wines, fetch_top_wines
+from fetch import fetch_least_recent_wines
+from fetch import fetch_most_recent_wines
+from fetch import fetch_top_wines
 from wine_types import DEFAULT_TYPE_CHOICE
 from form import SearchWinesForm
 import datetime
 from constants import BACKEND_HOST, MAX_WINE_PRICE, SECRET_KEY
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
+
 
 @app.route('/')
 def index():
@@ -26,11 +31,12 @@ def index():
     """
 
     return render_template(
-        'index.html', 
-        top_wines=fetch_top_wines(6), 
-        most_recent_wines=fetch_most_recent_wines(6), 
+        'index.html',
+        top_wines=fetch_top_wines(6),
+        most_recent_wines=fetch_most_recent_wines(6),
         least_recent_wines=fetch_least_recent_wines(6)
     )
+
 
 @app.route('/advanced-search', methods=['GET', 'POST'])
 def advanced_search():
@@ -54,7 +60,7 @@ def advanced_search():
         rating_end = form.rating_end.data
         price_start = form.price_start.data
         price_end = form.price_end.data
-    
+
         url = f'{BACKEND_HOST}advanced-search?limit=24&'
 
         if name != "":
@@ -66,22 +72,22 @@ def advanced_search():
         if country != DEFAULT_COUNTRY_CHOICE:
             url += f'country={country}&'
 
-        if year_start == None:
+        if year_start is None:
             year_start = 1500
 
-        if year_end == None:
+        if year_end is None:
             year_end = datetime.date.today().year
 
-        if rating_start == None:
+        if rating_start is None:
             rating_start = 0.0
-        
-        if rating_end == None:
+
+        if rating_end is None:
             rating_end = 5.0
 
-        if price_start == None:
+        if price_start is None:
             price_start = 0
 
-        if price_end == None:
+        if price_end is None:
             price_end = MAX_WINE_PRICE
 
         url += f'year_start={year_start}&year_end={year_end}&'
@@ -92,11 +98,22 @@ def advanced_search():
 
         if response.status_code == 200:
             data = response.json()
-            return render_template('advanced-search.html', form=form, result=data, error_message=error_message)
+            return render_template(
+                'advanced-search.html',
+                form=form,
+                result=data,
+                error_message=error_message
+            )
         else:
             error_message = f'Error: Unable to fetch data from FastAPI Backend'
 
-    return render_template('advanced-search.html', form=form, result=None, error_message=error_message)
+    return render_template(
+        'advanced-search.html',
+        form=form,
+        result=None,
+        error_message=error_message
+    )
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)

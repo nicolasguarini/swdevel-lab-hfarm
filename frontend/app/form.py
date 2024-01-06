@@ -1,15 +1,23 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, StringField, IntegerField, FloatField, validators
+from wtforms import (
+    SelectField,
+    SubmitField,
+    StringField,
+    IntegerField,
+    FloatField,
+    validators
+)
 from countries import COUNTRIES, DEFAULT_COUNTRY_CHOICE
 from wine_types import TYPES, DEFAULT_TYPE_CHOICE
 import datetime
 
+
 class SearchWinesForm(FlaskForm):
     name = StringField(
-        label="Wine name...", 
+        label="Wine name...",
         render_kw={"placeholder": "Wine name..."}
     )
-    
+
     type = SelectField(choices=[DEFAULT_TYPE_CHOICE] + TYPES)
     country = SelectField(choices=[DEFAULT_COUNTRY_CHOICE] + COUNTRIES)
 
@@ -41,10 +49,10 @@ class SearchWinesForm(FlaskForm):
         "placeholder": "Min Price",
         "min": 0,
     }, validators=[validators.Optional()])
-    
+
     price_end = FloatField("Max Price", render_kw={
         "placeholder": "Max Price",
         "min": 0,
     }, validators=[validators.Optional()])
-    
+
     submit = SubmitField('Search Wines!')
