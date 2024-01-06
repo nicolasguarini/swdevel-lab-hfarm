@@ -97,7 +97,8 @@ def advanced_search_wines(
     region: str = Query(None),
     winery: str = Query(None),
     # ----- 
-    rating: int = Query(None),
+    rating_start: float = Query(None),
+    rating_end: float = Query(None),
     # -----
     num_ratings_start: int = Query(None), 
     num_ratings_end: int = Query(None),
@@ -133,7 +134,7 @@ def advanced_search_wines(
         "country": country,
         "region": region,
         "winery": winery,
-        "rating": rating,
+        "rating": (rating_start, rating_end) if rating_start is not None and rating_end is not None else None,
         "numberofratings": (num_ratings_start, num_ratings_end) if num_ratings_start is not None and num_ratings_end is not None else None,
         "price": (price_start, price_end) if price_start is not None and price_end is not None else None,
         "year": (year_start, year_end) if year_start is not None and year_end is not None else None,

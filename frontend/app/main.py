@@ -6,40 +6,15 @@ This module defines a simple Flask application that serves as the frontend for t
 
 from flask import Flask, render_template
 import requests
-from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, StringField
-import os
-
-BACKEND_HOST = 'http://backend/'
-DEFAULT_TYPE_CHOICE = "Select type..."
-DEFAULT_COUNTRY_CHOICE = "Select country..."
+from countries import DEFAULT_COUNTRY_CHOICE
+from fetch import fetch_least_recent_wines, fetch_most_recent_wines, fetch_top_wines
+from wine_types import DEFAULT_TYPE_CHOICE
+from form import SearchWinesForm
+import datetime
+from constants import BACKEND_HOST, MAX_WINE_PRICE, SECRET_KEY
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(32)
-
-class SearchWinesForm(FlaskForm):
-    name = StringField(
-        label="Wine name...", 
-        render_kw={"placeholder": "Wine name..."}
-    )
-
-    type = SelectField(choices=[
-        DEFAULT_TYPE_CHOICE, 
-        "white", 
-        "red", 
-        "sparkling", 
-        "rose"
-    ]) # TODO: get all types from backend
-
-    country = SelectField(choices=[
-        DEFAULT_COUNTRY_CHOICE, 
-        "Italy",
-        "Germany", 
-        "France",
-        "Austria"
-    ]) # TODO: get all countries from backedn
-    
-    submit = SubmitField('Search Wines!')
+app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route('/')
 def index():
@@ -50,41 +25,12 @@ def index():
         str: Rendered HTML content for the index page.
     """
 
-    return render_template('index.html', top_wines=fetch_top_wines(6), most_recent_wines=fetch_most_recent_wines(6), least_recent_wines=fetch_least_recent_wines(6))
-
-def fetch_top_wines(limit=10):
-    url = BACKEND_HOST + "top-wines?limit=" + str(limit)
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        print(response.json())
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching wines from backend: {e}")
-        return 'Wines not available'
-
-def fetch_most_recent_wines(limit=10):
-    url = BACKEND_HOST + "most-recent-wines?limit=" + str(limit)
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching wines from backend: {e}")
-        return 'Wines not available'
-    
-def fetch_least_recent_wines(limit=10):
-    url = BACKEND_HOST + "least-recent-wines?limit=" + str(limit)
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching wines from backend: {e}")
-        return 'Wines not available'
+    return render_template(
+        'index.html', 
+        top_wines=fetch_top_wines(6), 
+        most_recent_wines=fetch_most_recent_wines(6), 
+        least_recent_wines=fetch_least_recent_wines(6)
+    )
 
 @app.route('/advanced-search', methods=['GET', 'POST'])
 def advanced_search():
@@ -94,6 +40,7 @@ def advanced_search():
     Returns:
         str: Rendered HTML content for the advanced search page.
     """
+
     form = SearchWinesForm()
     error_message = None  # Initialize error message
 
@@ -101,6 +48,12 @@ def advanced_search():
         type = form.type.data
         country = form.country.data
         name = form.name.data
+        year_start = form.year_start.data
+        year_end = form.year_end.data
+        rating_start = form.rating_start.data
+        rating_end = form.rating_end.data
+        price_start = form.price_start.data
+        price_end = form.price_end.data
     
         url = f'{BACKEND_HOST}advanced-search?limit=24&'
 
@@ -113,7 +66,27 @@ def advanced_search():
         if country != DEFAULT_COUNTRY_CHOICE:
             url += f'country={country}&'
 
-        print("URL: " + url)
+        if year_start == None:
+            year_start = 1500
+
+        if year_end == None:
+            year_end = datetime.date.today().year
+
+        if rating_start == None:
+            rating_start = 0.0
+        
+        if rating_end == None:
+            rating_end = 5.0
+
+        if price_start == None:
+            price_start = 0
+
+        if price_end == None:
+            price_end = MAX_WINE_PRICE
+
+        url += f'year_start={year_start}&year_end={year_end}&'
+        url += f'rating_start={rating_start}&rating_end={rating_end}&'
+        url += f'price_start={price_start}&price_end={price_end}&'
 
         response = requests.get(url)
 

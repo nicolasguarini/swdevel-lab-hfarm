@@ -13,16 +13,41 @@
         <form method="POST" action="" style="max-width: 800px; margin: auto; text-align: center;">
             {{ form.csrf_token }}
             <div class="form-group">
-                {{ form.name(class="form-text m-auto p-2", style="max-width: 300px") }}
+                {{ form.name(class="form-control d-inline m-auto p-2", style="max-width: 300px") }}
                 <br> <br>
                 {{ form.type(class="form-select m-auto", style="max-width: 300px") }}
                 <br>
                 {{ form.country(class="form-select m-auto", style="max-width: 300px")}}
+                <br>
+
+                <div style="margin-bottom: 10px;">
+                    Min. Year: {{ form.year_start(class="form-control d-inline", style="width: 120px")}}
+                </div>
+                <div>
+                    Max. Year: {{ form.year_end(class="form-control d-inline", style="width: 120px;")}}
+                </div>
+                <br>
+                
+                <div style="margin-bottom: 10px;">
+                    Min. Rating: {{ form.rating_start(class="form-control d-inline", style="width: 120px")}}
+                </div>
+                <div>
+                    Max. Rating: {{ form.rating_end(class="form-control d-inline", style="width: 120px;")}}
+                </div>
+                <br>
+
+                <div style="margin-bottom: 10px;">
+                    Min. Price: {{ form.price_start(class="form-control d-inline", style="width: 120px")}}
+                </div>
+                <div>
+                    Max. Price: {{ form.price_end(class="form-control d-inline", style="width: 120px;")}}
+                </div>
+                <br>
             </div>
+
             {{ form.submit(class="btn btn-primary mt-3") }}
         </form>
 
-        <!-- Display the result here -->
         <div id="resultContainer" class="my-5">
             {% if result %}
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">

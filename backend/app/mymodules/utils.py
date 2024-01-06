@@ -114,28 +114,9 @@ def filter_wines(df_wines, filters):
     
     for column, value in filters.items():
         if value is not None and column in df_wines.columns:
-            if column == 'year' or column == 'price' or column == 'numberofratings' and None not in value:
+            if column == 'year' or column == 'price' or column == 'numberofratings' or column == 'rating' and None not in value:
                 filtered_wines = filter_range(filtered_wines, column, *value)
-            elif column == 'rating':
-                filtered_wines = filter_by_rating(filtered_wines, value)                
             else:
                 filtered_wines = filter_contains(filtered_wines, column, value)
 
     return filtered_wines
-
-def filter_by_rating(df_wines, target_rating):
-    """
-    Filter the DataFrame based on the desired rating.
-
-    Parameters:
-        - df_wines (pd.DataFrame): DataFrame containing wine information.
-        - target_rating (float): Desired rating from 0 to 5.
-
-    Returns:
-        - pd.DataFrame: DataFrame with only instances that have the desired rating.
-    """
-    if 0 <= target_rating <= 5:
-        filtered_df = df_wines[(target_rating <= df_wines['rating']) & (df_wines['rating'] < target_rating + 1)]
-        return filtered_df
-    else: 
-        return df_wines
