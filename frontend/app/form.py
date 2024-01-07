@@ -13,6 +13,28 @@ import datetime
 
 
 class SearchWinesForm(FlaskForm):
+    """
+    Represents a FlaskForm for searching wines with various criteria.
+
+    Attributes:
+        name (StringField): The name of the wine.
+        type (SelectField): The type of the wine.
+        country (SelectField): The country of origin for the wine.
+        year_start (IntegerField): The minimum year of production for the wine.
+        year_end (IntegerField): The maximum year of production for the wine.
+        rating_start (FloatField): The minimum rating for the wine.
+        rating_end (FloatField): The maximum rating for the wine.
+        price_start (FloatField): The minimum price for the wine.
+        price_end (FloatField): The maximum price for the wine.
+        submit (SubmitField): Submit button for initiating the wine search.
+
+    Note:
+        This form includes various fields for specifying search criteria such as
+        name, type, country, production year range, rating range, and price range.
+        Each field is appropriately configured with placeholders, validation constraints,
+        and default choices where applicable.
+    """
+    
     name = StringField(
         label="Wine name...",
         render_kw={"placeholder": "Wine name..."}
