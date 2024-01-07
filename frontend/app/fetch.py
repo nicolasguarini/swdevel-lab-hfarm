@@ -12,7 +12,7 @@ def fetch_top_wines(limit=10):
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching wines from backend: {e}")
-        return 'Wines not available'
+        return None
 
 
 def fetch_most_recent_wines(limit=10):
@@ -24,7 +24,7 @@ def fetch_most_recent_wines(limit=10):
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching wines from backend: {e}")
-        return 'Wines not available'
+        return None
 
 
 def fetch_least_recent_wines(limit=10):
@@ -36,4 +36,4 @@ def fetch_least_recent_wines(limit=10):
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching wines from backend: {e}")
-        return 'Wines not available'
+        return None
