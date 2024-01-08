@@ -66,18 +66,6 @@ def get_most_recent_wines(limit: int = 10):
     return JSONResponse(content=most_recent_wine)
 
 
-@app.get('/years-range')
-def get_years_range():
-    years_range = years_in_wines(df_wines)
-    return JSONResponse(content=years_range)
-
-
-@app.get('/num-ratings-max-value')
-def get_num_ratings_max_value():
-    num_ratings_max_value = max_number_of_ratings(df_wines)
-    return JSONResponse(content=num_ratings_max_value)
-
-
 @app.get('/countries')
 def get_countries():
     countries = countries_df(df_wines)
@@ -183,25 +171,7 @@ def read_root():
     info = {
         "message": "Welcome to the Wine API!",
         "description": ("This API provides information about "
-                        "different types of wines."),
-        "endpoints": {
-            "/top-wines": "Get the best-reviewed wines.",
-            "/most-recent-wines": "Get the most recently reviewed wines.",
-            "/least-recent-wines": "Get the least recently reviewed wines.",
-            "/get-date": "Get the current date."
-        }
+                        "different types of wines.")
     }
 
     return JSONResponse(content=info)
-
-
-@app.get('/get-date')
-def get_date():
-    """
-    Endpoint to get the current date.
-
-    Returns:
-        dict: Current date in ISO format.
-    """
-    current_date = datetime.now().isoformat()
-    return JSONResponse(content={"date": current_date})

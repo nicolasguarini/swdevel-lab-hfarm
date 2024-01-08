@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy only the necessary files to the container
 COPY ./app /app
+COPY ./tests /tests
 COPY requirements.txt /app
 
 # Install any needed packages specified in requirements.txt

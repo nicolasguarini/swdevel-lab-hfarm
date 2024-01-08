@@ -53,39 +53,6 @@ def wines_by_least_recent_year(df_wines, limit=10):
     return df_wines.sort_values(by="year", ascending=True).head(limit)
 
 
-def years_in_wines(df_wines):
-    """
-    Extract the minimum and maximum years from the 'year' column.
-
-    Parameters:
-        - df_wines (pd.DataFrame): DataFrame containing
-        wine information.
-
-    Returns:
-        - dict: Dictionary with the minimum and maximum years.
-    """
-    filtered_years = df_wines[df_wines['year'] != 'N.V.']['year'].astype(float)
-    min_year = np.min(filtered_years)
-    max_year = np.max(filtered_years)
-
-    return {"min_year": min_year, "max_year": max_year}
-
-
-def max_number_of_ratings(df_wines):
-    """
-    Get the maximum number of ratings in the DataFrame.
-
-    Parameters:
-        - df_wines (pd.DataFrame): DataFrame containing wine information.
-
-    Returns:
-        - dict: Dictionary with the maximum number of ratings.
-    """
-    max_ratings = int(df_wines['numberofratings'].max())
-
-    return {"max_number_of_ratings": max_ratings}
-
-
 def countries_df(df_wines):
     """
     Extract unique countries from the 'country' column.
