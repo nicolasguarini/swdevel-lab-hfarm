@@ -26,8 +26,10 @@ df_white["type"] = "white"
 
 df_wines = pd.concat([df_red, df_rose, df_sparkling, df_white])
 df_wines.columns = map(str.lower, df_wines.columns)
-df_wines['year'] = pd.to_numeric(df_wines['year'], errors='coerce')
-df_wines['year'] = df_wines['year'].astype('Int64')
+df_wines['year'] = pd.to_numeric(
+    df_wines['year'],
+    errors='coerce'
+    ).astype('Int64')
 
 
 @app.get('/top-wines')
